@@ -64,11 +64,10 @@
         </label>
 
         <div class="actions">
-          <button class="button button-secondary" type="submit" name="action" value="preview">Preview course</button>
           <button class="button button-primary" type="submit" name="action" value="translate">Translate with DeepL <span>→</span></button>
           <button class="button button-ai" type="submit" name="action" value="ai_translate">✦ AI adapt + translate</button>
         </div>
-        <p class="privacy-note">AI adapt + translate uses Gemini to suggest course terms and localize idioms, then DeepL to translate with the generated glossary. Preview stays local. Gemini and DeepL receive course text when you choose translation.</p>
+        <p class="privacy-note"><b>Translate with DeepL</b> translates course text and uses the glossary ID above if provided. <b>AI adapt + translate</b> uses Gemini to suggest glossary terms and adapt idioms or culture-bound text, then DeepL creates and applies the glossary while translating. AI adaptation requires both Gemini and DeepL API keys.</p>
       </form>
 
       <aside class="info-card">

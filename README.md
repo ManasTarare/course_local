@@ -15,13 +15,13 @@ notepad .env
 
 Replace `put_your_deepl_api_key_here` in `.env` with your DeepL API key and `put_your_gemini_api_key_here` with a Gemini API key, then save. The app uses Gemini for AI analysis/adaptation and DeepL for translation and glossary creation.
 
-Set `GEMINI_MODEL` to a model available to your API account if the default is unavailable. The regular **Translate with DeepL** and **Preview course** actions do not require a Gemini key.
+Set `GEMINI_MODEL` to a model available to your API account if the default is unavailable. **Translate with DeepL** requires a DeepL key. **AI adapt + translate** requires both Gemini and DeepL keys.
 
 ```powershell
 .\env\Scripts\python.exe app.py
 ```
 
-Open http://127.0.0.1:5000 in your browser. Select a JSON course and choose **Preview course** to render it as HTML, or **Translate with DeepL** to translate and render it. The app supports uploads up to 10 MB.
+Open http://127.0.0.1:5000 in your browser. Select a JSON course and choose **Translate with DeepL** for translation with an optional glossary ID, or **AI adapt + translate** for AI terminology suggestions and idiom adaptation followed by DeepL translation. The app supports uploads up to 10 MB.
 
 ## AI adaptation flow
 
