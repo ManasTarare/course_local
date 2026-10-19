@@ -1,0 +1,20 @@
+{
+  "course_id": "proverb-localization-demo",
+  "title": "A short lesson about proverbs",
+  "description": "A small example for checking idiom adaptation.",
+  "language": "en",
+  "modules": [
+    {
+      "id": "module-1",
+      "title": "Value what you have",
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "A bird in the hand",
+          "body": "The English saying 'A bird in the hand is worth two in the bush' teaches us to value what we already have.",
+          "example": "Discuss a familiar saying in your own community that teaches the same lesson."
+        }
+      ]
+    }
+  ]
+}

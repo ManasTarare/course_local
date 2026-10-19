@@ -1,0 +1,31 @@
+{% if content is mapping %}
+  {% set label = content.get('title') or content.get('name') %}
+  <div class="content-card">
+    {% if label %}<h3>{{ label }}</h3>{% endif %}
+    {% for child_key, child_value in content.items() %}
+      {% if child_key not in ['id', 'course_id', 'title', 'name', 'language'] %}
+        {% if child_value is mapping or (child_value is sequence and child_value is not string) %}
+          {% set child_label = child_key.replace('_', ' ').replace('-', ' ')|title %}
+          <div class="nested-block"><h4>{{ child_label }}</h4>{% set content = child_value %}{% include 'render_value.html' %}</div>
+        {% elif child_value is string and child_value %}
+          {% set normalized = child_key|lower %}
+          {% if normalized in ['image', 'image_url', 'image_path', 'video', 'video_url', 'file', 'file_url'] %}
+            <div class="asset-reference"><span class="asset-icon">▧</span><span><b>{{ child_key.replace('_', ' ')|title }}</b><br>{{ child_value }}</span></div>
+          {% else %}
+            <div class="text-block"><h4>{{ child_key.replace('_', ' ').replace('-', ' ')|title }}</h4><p>{{ child_value }}</p></div>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </div>
+{% elif content is sequence and content is not string %}
+  <div class="list-grid">
+    {% for item in content %}
+      {% if item is mapping %}{% set content = item %}{% include 'render_value.html' %}
+      {% elif item is sequence and item is not string %}{% set content = item %}{% include 'render_value.html' %}
+      {% else %}<div class="text-block list-item"><p>{{ item }}</p></div>{% endif %}
+    {% endfor %}
+  </div>
+{% elif content is string %}
+  <div class="text-block"><p>{{ content }}</p></div>
+{% endif %}

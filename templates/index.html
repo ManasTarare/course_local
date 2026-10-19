@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Localizer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Course Localizer home"><span class="brand-mark">C</span> Course Localizer</a>
+    <span class="local-badge"><span></span> Local workspace</span>
+  </header>
+
+  <main class="layout">
+    <section class="intro">
+      <p class="eyebrow">COURSE TRANSLATION WORKBENCH</p>
+      <h1>Make your course feel at home.</h1>
+      <p class="subhead">Upload a course JSON file, choose a locale, and read the result as a course page instead of raw JSON.</p>
+      <div class="steps" aria-label="Workflow">
+        <div><span>1</span> Upload JSON</div><i></i><div><span>2</span> Preview or translate</div><i></i><div><span>3</span> Review course</div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <form class="controls" method="post" enctype="multipart/form-data">
+        <div class="panel-heading">
+          <div><p class="eyebrow">SOURCE COURSE</p><h2>Choose a course file</h2></div>
+          <span class="file-type">.JSON</span>
+        </div>
+        <label class="upload-box" for="course_file">
+          <span class="upload-icon">↑</span>
+          <strong>Choose a JSON file</strong>
+          <span>Course structure and learner-facing text</span>
+          <input id="course_file" name="course_file" type="file" accept="application/json,.json" required>
+          <span class="file-name" id="file-name">No file selected</span>
+        </label>
+
+        <div class="panel-heading profile-heading">
+          <div><p class="eyebrow">LOCALIZATION PROFILE</p><h2>Who is this for?</h2></div>
+        </div>
+        <div class="field-grid">
+          <label>Source language
+            <input name="source_language" value="{{ profile.get('source_language', 'EN') }}" placeholder="EN" maxlength="10">
+          </label>
+          <label>Target language code
+            <input name="target_language" value="{{ profile.get('target_language', 'ES') }}" placeholder="ES" maxlength="10" required>
+          </label>
+          <label>Target locale
+            <input name="locale" value="{{ profile.get('locale', '') }}" placeholder="es-MX">
+          </label>
+          <label>DeepL glossary ID <span class="optional">optional</span>
+            <input name="glossary_id" value="{{ profile.get('glossary_id', '') }}" placeholder="Paste glossary ID">
+          </label>
+        </div>
+        <label class="full-field">Audience
+          <input name="audience" value="{{ profile.get('audience', '') }}" placeholder="For example, adult beginners in Mexico">
+        </label>
+        <label class="full-field">Tone and adaptation notes
+          <textarea name="tone" rows="2" placeholder="Tone, preferred wording, examples to preserve...">{{ profile.get('tone', '') }}</textarea>
+        </label>
+        <label class="full-field">Additional notes
+          <textarea name="notes" rows="3" placeholder="Keep product names unchanged. Flag examples that may need local replacement.">{{ profile.get('notes', '') }}</textarea>
+        </label>
+
+        <div class="actions">
+          <button class="button button-secondary" type="submit" name="action" value="preview">Preview course</button>
+          <button class="button button-primary" type="submit" name="action" value="translate">Translate with DeepL <span>→</span></button>
+          <button class="button button-ai" type="submit" name="action" value="ai_translate">✦ AI adapt + translate</button>
+        </div>
+        <p class="privacy-note">AI adapt + translate uses Gemini to suggest course terms and localize idioms, then DeepL to translate with the generated glossary. Preview stays local. Gemini and DeepL receive course text when you choose translation.</p>
+      </form>
+
+      <aside class="info-card">
+        <div class="info-icon">✳</div>
+        <h3>What gets translated?</h3>
+        <p>Common fields like titles, descriptions, lesson text, quiz questions, answers, captions, and alt text.</p>
+        <hr>
+        <h3>What should you review?</h3>
+        <p>AI mode can rewrite idioms and cultural text. Actual image files and embedded documents are not in a JSON upload, so their visuals remain unchanged.</p>
+        <div class="info-foot">Output appears below as a readable course page.</div>
+      </aside>
+    </section>
+
+    <section class="glossary-panel">
+      <div class="glossary-copy">
+        <p class="eyebrow">DEEPL GLOSSARY API</p>
+        <h2>Optional: create a glossary yourself</h2>
+        <p>You can skip this section. <b>AI adapt + translate</b> analyzes the course, creates useful glossary entries automatically, and applies the glossary. Use this form only when you want to specify terms yourself.</p>
+        {% if glossary_note %}<div class="message success">{{ glossary_note }}</div>{% endif %}
+        {% if glossary_error %}<div class="message error">{{ glossary_error }}</div>{% endif %}
+      </div>
+      <form class="glossary-form" method="post" action="{{ url_for('make_glossary') }}">
+        <label>Glossary name
+          <input name="glossary_name" value="Course terminology" maxlength="200" required>
+        </label>
+        <div class="field-grid glossary-languages">
+          <label>Source language code
+            <input name="glossary_source_language" value="{{ profile.get('source_language', 'EN') }}" placeholder="EN" maxlength="10" required>
+          </label>
+          <label>Target language code
+            <input name="glossary_target_language" value="{{ profile.get('target_language', 'ES') }}" placeholder="ES" maxlength="10" required>
+          </label>
+        </div>
+        <label>Term pairs <span class="optional">one per line, source =&gt; preferred translation</span>
+          <textarea name="glossary_terms" rows="5" placeholder="customer support => atención al cliente&#10;learning module => módulo de aprendizaje&#10;BrandName => BrandName" required></textarea>
+        </label>
+        <button class="button button-secondary" type="submit">Create glossary manually in DeepL <span>→</span></button>
+        <p class="privacy-note">The terms are sent to DeepL to create a glossary. The returned ID is placed in the glossary ID field above.</p>
+      </form>
+    </section>
+
+    {% if error %}<div class="message error" role="alert"><strong>Could not process the course.</strong><br>{{ error }}</div>{% endif %}
+    {% if result is not none %}
+      <section class="result" aria-live="polite">
+        <div class="result-bar">
+          <div><p class="eyebrow">COURSE VIEW</p><h2>Rendered course</h2></div>
+          <span class="status-chip">{{ 'TRANSLATED' if count else 'PREVIEW' }}</span>
+        </div>
+        {% if notice %}<div class="message success">{{ notice }}</div>{% endif %}
+        {% if ai_details %}
+          <div class="ai-report">
+            <h3>AI localization notes</h3>
+            {% if ai_details.terms %}
+              <p class="report-label">Generated glossary terms</p>
+              <ul>{% for term in ai_details.terms %}<li><span>{{ term.source }}</span><b>→</b><span>{{ term.target }}</span></li>{% endfor %}</ul>
+            {% else %}<p class="report-muted">No glossary terms were needed for this course.</p>{% endif %}
+            {% if ai_details.adaptations %}
+              <p class="report-label">Adapted idioms or culture-bound text</p>
+              {% for item in ai_details.adaptations %}
+                <div class="adaptation-item"><p><b>Source:</b> {{ item.source }}</p><p><b>Localized:</b> {{ item.result }}</p><small>{{ item.reason }}</small></div>
+              {% endfor %}
+            {% else %}<p class="report-muted">AI found no idiom or culture-bound segment requiring a special rewrite.</p>{% endif %}
+          </div>
+        {% endif %}
+        {% set course_data = result %}
+        {% include 'course_content.html' %}
+      </section>
+    {% endif %}
+    <footer>Course Localizer <span>·</span> Local prototype for course review</footer>
+  </main>
+
+  <script>
+    const picker = document.getElementById('course_file');
+    const filename = document.getElementById('file-name');
+    picker.addEventListener('change', () => {
+      filename.textContent = picker.files.length ? picker.files[0].name : 'No file selected';
+    });
+  </script>
+</body>
+</html>

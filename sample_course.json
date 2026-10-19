@@ -1,0 +1,34 @@
+{
+  "course_id": "intro-to-customer-support",
+  "title": "Introduction to Customer Support",
+  "description": "Learn how to help customers solve common problems.",
+  "language": "en",
+  "modules": [
+    {
+      "id": "module-1",
+      "title": "Starting a helpful conversation",
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Listen before you respond",
+          "body": "A customer says, 'I cannot sign in.' First, acknowledge the problem and ask one clear question.",
+          "image": "images/support-agent.png",
+          "alt_text": "A support agent listening to a customer",
+          "example": "Try saying: 'I can help with that. What happens when you try to sign in?'"
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q1",
+          "question": "What should you do first when a customer reports a problem?",
+          "options": [
+            "Acknowledge the issue and ask a clear question",
+            "Guess the cause",
+            "End the conversation"
+          ],
+          "answer": "Acknowledge the issue and ask a clear question"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "source_language": "EN",
+  "target_language": "ES",
+  "target_locale": "es-MX",
+  "audience": "Adult beginners taking an introductory course in Mexico",
+  "tone": "Friendly, clear, and respectful; use familiar Mexican Spanish",
+  "adaptation_notes": [
+    "Keep product names unchanged.",
+    "Use examples that make sense to learners in Mexico.",
+    "Flag references that should be replaced instead of inventing facts."
+  ],
+  "glossary_id": ""
+}

@@ -1,0 +1,23 @@
+<article class="course-page">
+  {% if course_data is mapping %}
+    {% set heading = course_data.get('title') or course_data.get('name') or 'Course preview' %}
+    <header class="course-header">
+      <span class="course-kicker">LEARNING COURSE</span>
+      <h1>{{ heading }}</h1>
+      {% if course_data.get('description') %}<p>{{ course_data.get('description') }}</p>{% endif %}
+    </header>
+    {% for key, value in course_data.items() %}
+      {% if key not in ['title', 'name', 'description', 'id', 'course_id', 'language'] %}
+        {% set section_title = key.replace('_', ' ').replace('-', ' ')|title %}
+        <section class="course-section">
+          <h2>{{ section_title }}</h2>
+          {% set content = value %}
+          {% include 'render_value.html' %}
+        </section>
+      {% endif %}
+    {% endfor %}
+  {% elif course_data is sequence and course_data is not string %}
+    <header class="course-header"><span class="course-kicker">LEARNING COURSE</span><h1>Course preview</h1></header>
+    {% for value in course_data %}{% set content = value %}{% include 'render_value.html' %}{% endfor %}
+  {% endif %}
+</article>
