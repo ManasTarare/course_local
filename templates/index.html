@@ -49,9 +49,6 @@
           <label>Target locale
             <input name="locale" value="{{ profile.get('locale', '') }}" placeholder="es-MX">
           </label>
-          <label>DeepL glossary ID <span class="optional">optional</span>
-            <input name="glossary_id" value="{{ profile.get('glossary_id', '') }}" placeholder="Paste glossary ID">
-          </label>
         </div>
         <label class="full-field">Audience
           <input name="audience" value="{{ profile.get('audience', '') }}" placeholder="For example, adult beginners in Mexico">
@@ -64,10 +61,10 @@
         </label>
 
         <div class="actions">
-          <button class="button button-primary" type="submit" name="action" value="translate">Translate with DeepL <span>→</span></button>
+          <button class="button button-secondary" type="submit" name="action" value="preview">Preview course</button>
           <button class="button button-ai" type="submit" name="action" value="ai_translate">✦ AI adapt + translate</button>
         </div>
-        <p class="privacy-note"><b>Translate with DeepL</b> translates course text and uses the glossary ID above if provided. <b>AI adapt + translate</b> uses Gemini to suggest glossary terms and adapt idioms or culture-bound text, then DeepL creates and applies the glossary while translating. AI adaptation requires both Gemini and DeepL API keys.</p>
+        <p class="privacy-note"><b>Preview course</b> stays local. <b>AI adapt + translate</b> uses Gemini to suggest glossary terms and adapt idioms for your audience, then DeepL creates and applies the glossary while translating. It requires both Gemini and DeepL API keys.</p>
       </form>
 
       <aside class="info-card">
@@ -80,36 +77,7 @@
         <div class="info-foot">Output appears below as a readable course page.</div>
       </aside>
     </section>
-
-    <section class="glossary-panel">
-      <div class="glossary-copy">
-        <p class="eyebrow">DEEPL GLOSSARY API</p>
-        <h2>Optional: create a glossary yourself</h2>
-        <p>You can skip this section. <b>AI adapt + translate</b> analyzes the course, creates useful glossary entries automatically, and applies the glossary. Use this form only when you want to specify terms yourself.</p>
-        {% if glossary_note %}<div class="message success">{{ glossary_note }}</div>{% endif %}
-        {% if glossary_error %}<div class="message error">{{ glossary_error }}</div>{% endif %}
-      </div>
-      <form class="glossary-form" method="post" action="{{ url_for('make_glossary') }}">
-        <label>Glossary name
-          <input name="glossary_name" value="Course terminology" maxlength="200" required>
-        </label>
-        <div class="field-grid glossary-languages">
-          <label>Source language code
-            <input name="glossary_source_language" value="{{ profile.get('source_language', 'EN') }}" placeholder="EN" maxlength="10" required>
-          </label>
-          <label>Target language code
-            <input name="glossary_target_language" value="{{ profile.get('target_language', 'ES') }}" placeholder="ES" maxlength="10" required>
-          </label>
-        </div>
-        <label>Term pairs <span class="optional">one per line, source =&gt; preferred translation</span>
-          <textarea name="glossary_terms" rows="5" placeholder="customer support => atención al cliente&#10;learning module => módulo de aprendizaje&#10;BrandName => BrandName" required></textarea>
-        </label>
-        <button class="button button-secondary" type="submit">Create glossary manually in DeepL <span>→</span></button>
-        <p class="privacy-note">The terms are sent to DeepL to create a glossary. The returned ID is placed in the glossary ID field above.</p>
-      </form>
-    </section>
-
-    {% if error %}<div class="message error" role="alert"><strong>Could not process the course.</strong><br>{{ error }}</div>{% endif %}
+{% if error %}<div class="message error" role="alert"><strong>Could not process the course.</strong><br>{{ error }}</div>{% endif %}
     {% if result is not none %}
       <section class="result" aria-live="polite">
         <div class="result-bar">
